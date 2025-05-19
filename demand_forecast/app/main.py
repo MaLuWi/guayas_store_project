@@ -48,28 +48,34 @@ def main():
         max_value=df_train['date'].max().date()
     )
 
-   # Compute total sales per item for the selected store
-item_sales = (
-    df_train[
-        (df_train['store_nbr'] == store_id) &
-        (df_train['date'] <= pd.to_datetime(start_date))
-    ]
-    .groupby('item_nbr')['unit_sales']
-    .sum()
-    .reset_index()
-)
+    # Compute total sales per item for the selected store
+    item_sales = (
+        df_train[
+            (df_train['store_nbr'] == store_id) &
+            (df_train['date'] <= pd.to_datetime(start_date))
+        ]
+        .groupby('item_nbr')['unit_sales']
+        .sum()
+        .reset_index()
+    )
 
-# Filter out items with zero sales
-item_sales = item_sales[item_sales['unit_sales'] > 0]
+    # Filter out items with zero sales
+    item_sales = item_sales[item_sales['unit_sales'] > 0]
 
+    # Sort by total sales descending
+    item_sales = item_sales.sort_values(by='unit_sales', ascending=False)
 
-# Sort by total sales descending
-item_sales = item_sales.sort_values(by='unit_sales', ascending=False)
+    # Final list of item_nbrs sorted by sales
+    valid_items = item_sales['item_nbr'].tolist()
 
-# Final list of item_nbrs sorted by sales
-valid_items = item_sales['item_nbr'].tolist()
+    item_id = st.sidebar.selectbox("Choose Item", valid_items)
 
-item_id = st.sidebar.selectbox("Choose Item", valid_items)
+    horizon = st.sidebar.number_input(
+        "Days to Forecast",
+        min_value=1,
+        max_value=60,
+        value=30
+    )
 
     # 4) Run forecast
     if st.sidebar.button("Run Forecast"):
@@ -123,6 +129,7 @@ item_id = st.sidebar.selectbox("Choose Item", valid_items)
 
     else:
         st.sidebar.info("Configure your inputs and click **Run Forecast**.")
+
 
 if __name__ == '__main__':
     main()
