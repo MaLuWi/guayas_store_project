@@ -29,10 +29,10 @@ def load_data(data_path=DATA_PATH):
 
     df_stores = pd.read_csv(files["stores"])
     df_items = pd.read_csv(files["items"])
-
+   # Filter to a store IDs that are actually in Guayas
     store_ids = [24, 26, 27, 28, 30, 32, 34, 35, 51, 36]
     df_stores = df_stores[df_stores['store_nbr'].isin(store_ids)].copy()
-
+  # Filter for the most impactful Items
     item_ids = [115611, 115892, 116017, 153267, 165550, 165551, 165704, 165988, 168927, 168930,
                 207857, 214381, 215352, 219150, 220435, 222879, 223136, 223434, 257847, 258396,
                 261700, 265254, 265257, 265559, 305080, 305229, 314384, 315176, 315179, 315460,
@@ -110,7 +110,6 @@ def preprocess_input_data(store_id, item_id, split_date, df_stores, df_items, df
     # Create an empty DataFrame to store the final result
     df_filled = pd.DataFrame()
 
-		# Add missing 0 sales
     # Iterate through each store and item combination in the filtered data 
     for (store, item), group in df_filtered.groupby(['store_nbr', 'item_nbr']):
         # Set 'date' as index and sort by date
@@ -167,7 +166,7 @@ def preprocess_input_data(store_id, item_id, split_date, df_stores, df_items, df
     return df_filled
 	
 def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, df_stores, df_items):
-    # 1) Fetch historical data
+    # Fetch historical data
     hist = df_train[
         (df_train['store_nbr'] == store_nbr) & 
         (df_train['item_nbr'] == item_nbr)
@@ -175,7 +174,7 @@ def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, 
     if hist.empty:
         return pd.DataFrame()
 
-    # 2) Build base DataFrame for future dates
+    # Build base DataFrame for future dates
     future_dates = pd.date_range(start=start_date, periods=days_ahead, freq='D')
     future_df = pd.DataFrame({
         'date': future_dates,
@@ -190,7 +189,7 @@ def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, 
     future_df = future_df.merge(df_stores, on='store_nbr', how='left')
     future_df = future_df.merge(df_items, on='item_nbr', how='left')
 
-    # 3) Use last 30 days of history to build lag features
+    # Use last 30 days of history to build lag features
     hist['date'] = pd.to_datetime(hist['date'])
     hist = hist.sort_values('date').tail(30)
     vals = hist['unit_sales'].values
@@ -207,7 +206,7 @@ def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, 
     future_df['lag_14'] = make_lag(vals, 14)
     future_df['lag_30'] = make_lag(vals, 30)
 
-    # 4) Rolling stats and pct change
+    # Rolling stats and pct change
     roll7 = pd.Series(vals).rolling(7).mean().fillna(method='bfill').values
     std7 = pd.Series(vals).rolling(7).std().fillna(method='bfill').values
     pct7 = pd.Series(vals).pct_change(7).fillna(0).values
@@ -217,13 +216,12 @@ def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, 
 
     future_df['is_weekend'] = future_df['day_of_week'].isin([5, 6])
 
-    # 5) Encode categoricals
+    # Encode categoricals
     from sklearn.preprocessing import LabelEncoder
     for col in ['city', 'state', 'cluster', 'family', 'class', 'store_type']:
         if col in future_df:
             future_df[col] = LabelEncoder().fit_transform(future_df[col].astype(str))
-
-    # 6) Fill missing optional feature
+   
     if 'perishable' not in future_df:
         future_df['perishable'] = 0
 
