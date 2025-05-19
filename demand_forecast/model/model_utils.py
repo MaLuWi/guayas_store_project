@@ -5,7 +5,7 @@ import gdown
 import numpy as np
 from data.data_utils import generate_future_data
 
-# Your actual public Google Drive link for the .xgb model
+# Google Drive link for the .xgb model
 XGB_MODEL_URL = "https://drive.google.com/uc?id=1Sqw5QuMy9cZ-7MmRxYKg59Kjvho-Dsil"
 MODEL_LOCAL_PATH = "model/model.xgb"
 
