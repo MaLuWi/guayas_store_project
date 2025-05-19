@@ -1,5 +1,4 @@
 # data/data_utils.py
-
 import pandas as pd
 import numpy as np
 import os
@@ -8,33 +7,8 @@ from app.config import DATA_PATH, GOOGLE_DRIVE_LINKS
 from sklearn.preprocessing import LabelEncoder
 
 def download_file(file_path, url):
-    """Safely download a file from Google Drive to a given path."""
-    import os
-    import gdown
-
-    # Ensure target directory exists
-    try:
-        dir_path = os.path.dirname(file_path)
-        if dir_path and not os.path.exists(dir_path):
-            os.makedirs(dir_path, exist_ok=True)
-    except Exception as e:
-        print(f"[ERROR] Failed to create directory {dir_path}: {e}")
-
-    # Download if missing
     if not os.path.exists(file_path):
-        print(f"[INFO] Downloading: {file_path}")
-        try:
-            result = gdown.download(url, file_path, quiet=False, fuzzy=True)
-            if result is None or not os.path.exists(file_path):
-                raise RuntimeError("gdown returned no result or the file is still missing.")
-        except Exception as e:
-            raise FileNotFoundError(
-                f"Could not download '{url}' to '{file_path}': {e}\n"
-                "• Ensure the Google Drive file is set to 'Anyone with the link can view'\n"
-                "• Or manually place the file at that path before re-running."
-            )
-    else:
-        print(f"[INFO] {file_path} already exists.")
+        gdown.download(url, file_path, quiet=False)
 
 def load_data(data_path=DATA_PATH):
     """Load and filter datasets for Guayas region and top store-item combos."""
@@ -64,16 +38,22 @@ def load_data(data_path=DATA_PATH):
     )
     combos = set(map(tuple, top_combos.values))
 
-   df_train = df_sample[df_sample[['store_nbr', 'item_nbr']].apply(tuple, axis=1).isin(combos)]
-
+    filtered = []
+    for chunk in pd.read_csv(files["train"], parse_dates=["date"], chunksize=10**6):
+        mask = (
+            (chunk['date'] < max_date)
+            & chunk.apply(lambda r: (r['store_nbr'], r['item_nbr']) in combos, axis=1)
+        )
+        filtered.append(chunk.loc[mask, ['store_nbr', 'item_nbr', 'date', 'unit_sales']])
+    df_train = pd.concat(filtered, ignore_index=True)
 
     return df_stores, df_items, df_train
 
 def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, df_stores, df_items):
     # 1) Fetch historical data
     hist = df_train[
-        (df_train['store_nbr'] == store_nbr) &
-        (df_train['item_nbr'] == item_nbr)
+        (df_train['store_nbr'] == store_nbr)
+        & (df_train['item_nbr'] == item_nbr)
     ].copy()
     if hist.empty:
         return pd.DataFrame()
@@ -93,10 +73,6 @@ def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, 
     future_df = future_df.merge(df_stores, on='store_nbr', how='left')
     future_df = future_df.merge(df_items, on='item_nbr', how='left')
 
-    # ✅ Ensure 'perishable' column exists for compatibility with model
-    if 'perishable' not in future_df.columns:
-        future_df['perishable'] = 0
-
     # 3) Take last 30 days of history
     hist['date'] = pd.to_datetime(hist['date'])
     hist = hist.sort_values('date').tail(30)
@@ -106,11 +82,9 @@ def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, 
     # 4) Create lag features
     padded = np.pad(vals, (0, pad_width), mode='edge')
     future_df['lag_1'] = padded[-days_ahead:]
-
     def make_lag(arr, shift):
         shifted = np.pad(arr, (shift, 0), mode='edge')[:-shift]
         return np.pad(shifted, (0, pad_width), mode='edge')[-days_ahead:]
-
     future_df['lag_7'] = make_lag(vals, 7)
     future_df['lag_14'] = make_lag(vals, 14)
     future_df['lag_30'] = make_lag(vals, 30)
