@@ -7,8 +7,13 @@ from app.config import DATA_PATH, GOOGLE_DRIVE_LINKS
 from sklearn.preprocessing import LabelEncoder
 
 def download_file(file_path, url):
+    """Download a file from Google Drive if it doesn't exist locally."""
+    # Ensure the target directory exists
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
     if not os.path.exists(file_path):
         gdown.download(url, file_path, quiet=False)
+    else:
+        print(f"{file_path} already exists.")
 
 def load_data(data_path=DATA_PATH):
     """Load and filter datasets for Guayas region and top store-item combos."""
