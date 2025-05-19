@@ -57,6 +57,3 @@ def forecast_timeseries(
     # 4) Return date + prediction
     return future_df[["date", "prediction"]]
 
-
-    # 4) Return date + prediction
-    return future_df[["date", "prediction"]]
