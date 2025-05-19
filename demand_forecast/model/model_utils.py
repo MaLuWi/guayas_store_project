@@ -6,7 +6,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 from app.config import MODEL_PATH
-from app.data_utils import generate_future_data
+from data.data_utils import generate_future_data
 
 def load_model():
     """Load the pickled XGBoost model directly from model/model.pkl"""
