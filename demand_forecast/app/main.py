@@ -6,7 +6,10 @@ import datetime
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-
+# Add project root to PYTHONPATH for import resolution
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 from app.config import MODEL_PATH
 from model.model_utils import load_model, forecast_timeseries
 from data.data_utils import load_data
