@@ -20,13 +20,4 @@ GOOGLE_DRIVE_LINKS = {
     "train": f"https://drive.google.com/uc?id={your_file_id_for_train_csv}"
 }
 
-MODEL_PATH = 'model/'
-
-# Google Drive file ID for your XGBoost model
-your_file_id_for_xgboost_model_xgb = "1Sqw5QuMy9cZ-7MmRxYKg59Kjvho-Dsil"
-
-# Google Drive download link for the model file
-GOOGLE_DRIVE_LINKS_MODELS = {
-    "xgboost_model": f"https://drive.google.com/uc?id={your_file_id_for_xgboost_model_xgb}"
-}
-
+MODEL_PATH = "model/"
