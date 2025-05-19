@@ -1,4 +1,3 @@
-# app/main.py
 import sys
 import os
 import datetime
@@ -30,7 +29,7 @@ def get_model():
 def main():
     st.title("🛒 Sales Forecasting Dashboard")
 
-    # 1) Load (cached) data & model
+    # 1) Load data and model
     df_stores, df_items, df_train = get_data()
     model = get_model()
 
@@ -39,7 +38,7 @@ def main():
 
     store_id = st.sidebar.selectbox(
         "Choose Store",
-        df_stores['store_nbr'].unique()
+        sorted(df_stores['store_nbr'].unique())
     )
 
     start_date = st.sidebar.date_input(
@@ -49,19 +48,23 @@ def main():
         max_value=df_train['date'].max().date()
     )
 
-    # filter items for that store up to the chosen date
+    # 3) Dynamically filter items with non-zero sales for this store
     valid_items = (
-        df_train[
-            (df_train.store_nbr == store_id) &
-            (df_train.date <= pd.to_datetime(start_date))
-        ]['item_nbr']
-        .unique()
+        df_train[df_train['store_nbr'] == store_id]
+        .groupby('item_nbr')['unit_sales']
+        .sum()
+        .loc[lambda x: x > 0]
+        .index
         .tolist()
     )
+
+    # Ensure items exist in df_items (clean intersection)
+    valid_items = sorted(set(df_items['item_nbr']).intersection(valid_items))
+
     if not valid_items:
         st.sidebar.error(
-            f"No historical items for store {store_id} by {start_date}. "
-            "Try an earlier start date."
+            f"No items with sales found for store {store_id} before {start_date}. "
+            "Try selecting another store or earlier date."
         )
         st.stop()
 
@@ -74,7 +77,7 @@ def main():
         value=30
     )
 
-    # 3) Run forecast when button clicked
+    # 4) Run forecast
     if st.sidebar.button("Run Forecast"):
         with st.spinner("Running forecast…"):
             fc = forecast_timeseries(
@@ -92,7 +95,7 @@ def main():
             st.error("No historical data available for that store/item.")
             return
 
-        # pull actuals for the same window
+        # actual sales in the prediction window
         actual = (
             df_train[
                 (df_train.store_nbr == store_id) &
@@ -106,11 +109,11 @@ def main():
             .rename(columns={'unit_sales': 'actual'})
         )
 
-        # merge, sort, forward‐fill
+        # merge actuals and predictions
         df_plot = pd.merge(actual, fc, on='date', how='outer').sort_values('date')
         df_plot['prediction'] = df_plot['prediction'].ffill()
 
-        # 4) Plotly chart
+        # 5) Plot
         fig = px.line(
             df_plot,
             x='date',
@@ -129,3 +132,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
