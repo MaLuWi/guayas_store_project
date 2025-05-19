@@ -6,11 +6,25 @@ from app.config import DATA_PATH, GOOGLE_DRIVE_LINKS
 from sklearn.preprocessing import LabelEncoder
 
 def download_file(file_path, url):
-    """Downloads a file from Google Drive if it doesn't exist locally."""
-    if not os.path.exists(file_path):
-        gdown.download(url, file_path, quiet=False)
-    else:
-        print(f"{file_path} already exists.")
+    """Safely download from Google Drive with gdown, creating directories if needed."""
+    import os
+    import gdown
+
+    try:
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        # Download using fuzzy=True to handle confirmation pages
+        result = gdown.download(url, file_path, quiet=False, fuzzy=True)
+
+        if result is None or not os.path.exists(file_path):
+            raise FileNotFoundError(f"gdown could not download: {url}")
+        else:
+            print(f"[INFO] Downloaded: {file_path}")
+
+    except Exception as e:
+        raise FileNotFoundError(f"Failed to download {url} to {file_path} — {e}")
+
 
 def load_data(data_path=DATA_PATH):
     """Downloads necessary data from Google Drive and loads CSV files into DataFrames."""
