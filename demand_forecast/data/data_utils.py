@@ -11,6 +11,7 @@ def download_file(file_path, url):
     import os
     import gdown
 
+    # Ensure target directory exists
     try:
         dir_path = os.path.dirname(file_path)
         if dir_path and not os.path.exists(dir_path):
@@ -18,12 +19,20 @@ def download_file(file_path, url):
     except Exception as e:
         print(f"[ERROR] Failed to create directory {dir_path}: {e}")
 
+    # Download if missing
     if not os.path.exists(file_path):
+        print(f"[INFO] Downloading: {file_path}")
         try:
-            print(f"[INFO] Downloading: {file_path}")
-            gdown.download(url, file_path, quiet=False)
+            # fuzzy=True helps gdown handle different Drive URL formats
+            result = gdown.download(url, file_path, quiet=False, fuzzy=True)
+            if result is None or not os.path.exists(file_path):
+                raise RuntimeError("gdown returned no result or the file is still missing.")
         except Exception as e:
-            print(f"[ERROR] Download failed for {file_path}: {e}")
+            raise FileNotFoundError(
+                f"Could not download '{url}' to '{file_path}': {e}\n"
+                "• Ensure the Google Drive file is set to 'Anyone with the link can view'\n"
+                "• Or manually place the file at that path before re-running."
+            )
     else:
         print(f"[INFO] {file_path} already exists.")
 
