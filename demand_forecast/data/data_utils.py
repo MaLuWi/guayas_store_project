@@ -70,6 +70,7 @@ def load_data(data_path=DATA_PATH):
        1146786, 1146795, 1146801, 1146802, 1143691, 1143685, 1157462,
        1158720, 1161572, 1157329, 1159415, 1162382, 1463810, 1463860,
        1463881, 1464086, 1464088]  # ToDo: add more items (e.g., all items from a family)
+    df_items = df_items[df_items['item_nbr'].isin(item_ids)].copy()
 
 	
     max_date = '2014-04-01'
