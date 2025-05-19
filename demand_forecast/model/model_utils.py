@@ -7,16 +7,15 @@ from app.config import MODEL_PATH, GOOGLE_DRIVE_LINKS_MODELS
 from sklearn.preprocessing import LabelEncoder
 from data.data_utils import download_file
 
-
 def load_model():
-    """Download and load the XGBoost model artifact."""
-    # 1) local path where the model should live
+    """Download and unpickle the trained XGBoost model."""
+    # Build path in the running container
     model_fp = os.path.join(MODEL_PATH, "xgboost_model.pkl")
 
-    # 2) download from Drive if it’s missing
+    # Fetch it from Drive if missing
     download_file(model_fp, GOOGLE_DRIVE_LINKS_MODELS["xgboost_model"])
 
-    # 3) load and return the model object
+    # Unpickle and return
     with open(model_fp, "rb") as f:
         model = pickle.load(f)
     return model
