@@ -1,32 +1,10 @@
+import os
 import pickle
 import xgboost as xgb
 import pandas as pd
 from data.data_utils import download_file, generate_future_data
 from app.config import MODEL_PATH, GOOGLE_DRIVE_LINKS_MODELS
 from sklearn.preprocessing import LabelEncoder
-
-def download_file(file_path, url):
-    """Safely download a file from Google Drive to a given path."""
-    import os
-    import gdown
-
-    try:
-        dir_path = os.path.dirname(file_path)
-        if dir_path and not os.path.exists(dir_path):
-            os.makedirs(dir_path, exist_ok=True)
-    except Exception as e:
-        print(f"[ERROR] Failed to create directory {dir_path}: {e}")
-
-    if not os.path.exists(file_path):
-        try:
-            print(f"[INFO] Downloading: {file_path}")
-            gdown.download(url, file_path, quiet=False)
-        except Exception as e:
-            print(f"[ERROR] Download failed for {file_path}: {e}")
-    else:
-        print(f"[INFO] {file_path} already exists.")
-
-
 
 def load_model(model_path=MODEL_PATH):
     files = {"xgboost_model": f"{model_path}model.xgb"}
@@ -38,7 +16,6 @@ def load_model(model_path=MODEL_PATH):
     xgboost_model = xgb.XGBRegressor()
     xgboost_model.load_model(files["xgboost_model"])
     return xgboost_model
-
 
 def predict(model, input_data):
     drop_cols = [c for c in ('date','unit_sales') if c in input_data]
