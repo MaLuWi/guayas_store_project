@@ -10,10 +10,14 @@ from sklearn.preprocessing import LabelEncoder
 def load_model(model_path=MODEL_PATH):
     files = {"xgboost_model": f"{model_path}model.xgb"}
     for key, file_path in files.items():
+        # Ensure the model directory exists
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         download_file(file_path, GOOGLE_DRIVE_LINKS_MODELS[key])
+    
     xgboost_model = xgb.XGBRegressor()
     xgboost_model.load_model(files["xgboost_model"])
     return xgboost_model
+
 
 def predict(model, input_data):
     drop_cols = [c for c in ('date','unit_sales') if c in input_data]
