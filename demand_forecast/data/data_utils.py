@@ -43,11 +43,10 @@ def load_data(data_path=DATA_PATH):
     # Load each downloaded CSV file into a pandas DataFrame
     df_stores = pd.read_csv(files["stores"])
     df_items = pd.read_csv(files["items"])
-  
-    
-    # Load data only for stores in 'Pichincha' region
-    # Get the list of store IDs for the state 'Pichincha'
+
+# Filter stores to only include relevant store_nbrs
     store_ids = [24, 26, 27, 28, 30, 32, 34, 35, 51, 36]
+    df_stores = df_stores[df_stores['store_nbr'].isin(store_ids)].copy()
     # Select the same items as for "Classical methods":
     item_ids = [115611,  115892,  116017,  153267,  165550,  165551,  165704,
         165988,  168927,  168930,  207857,  214381,  215352,  219150,
