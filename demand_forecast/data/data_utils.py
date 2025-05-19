@@ -1,4 +1,3 @@
-# data/data_utils.py
 import pandas as pd
 import numpy as np
 import os
@@ -8,75 +7,54 @@ from sklearn.preprocessing import LabelEncoder
 
 def download_file(file_path, url):
     """Safely download from Google Drive with gdown, creating directories if needed."""
-    import os
-    import gdown
-
     try:
-        # Ensure directory exists
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-        # Download using fuzzy=True to handle confirmation pages
         result = gdown.download(url, file_path, quiet=False, fuzzy=True)
-
         if result is None or not os.path.exists(file_path):
             raise FileNotFoundError(f"gdown could not download: {url}")
         else:
             print(f"[INFO] Downloaded: {file_path}")
-
     except Exception as e:
         raise FileNotFoundError(f"Failed to download {url} to {file_path} — {e}")
 
-
 def load_data(data_path=DATA_PATH):
-    """Downloads necessary data from Google Drive and loads filtered CSV files into DataFrames."""
-
-    # Only include the files we actually use
     files = {
         "stores": os.path.join(data_path, "stores.csv"),
         "items": os.path.join(data_path, "items.csv"),
         "train": os.path.join(data_path, "train.csv")
     }
 
-    # Download the files if they don't already exist locally
     for key, file_path in files.items():
         download_file(file_path, GOOGLE_DRIVE_LINKS[key])
 
-    # Load each downloaded CSV file into a pandas DataFrame
     df_stores = pd.read_csv(files["stores"])
     df_items = pd.read_csv(files["items"])
 
-# Filter stores to only include relevant store_nbrs
     store_ids = [24, 26, 27, 28, 30, 32, 34, 35, 51, 36]
     df_stores = df_stores[df_stores['store_nbr'].isin(store_ids)].copy()
-    # Select the same items as for "Classical methods":
-    item_ids = [115611,  115892,  116017,  153267,  165550,  165551,  165704,
-        165988,  168927,  168930,  207857,  214381,  215352,  219150,
-        220435,  222879,  223136,  223434,  257847,  258396,  261700,
-        265254,  265257,  265559,  305080,  305229,  314384,  315176,
-        315179,  315460,  320682,  323013,  358231,  364413,  364606,
-        364738,  368140,  368628,  410257,  414353,  414620,  414752,
-        418235,  459804,  464374,  464536,  510054,  514172,  514242,
-        518091,  518094,  554047,  559870,  559873,  564274,  564533,
-        567623,  581078,  587069,  621300,  641042,  671039,  692531,
-        730259,  749421,  749720,  759893,  769312,  789224,  801217,
-        802833,  804503,  807493,  812726,  819932,  830625,  839362,
-        839363,  841841,  841842,  843585,  847859,  847863,  848765,
-        850333,  862454,  876663,  911429,  913363,  938566,  938567,
-        938570,  938576,  939661,  939662,  964752, 1036689, 1037857,
-       1047679, 1047681, 1047685, 1047743, 1047772, 1047773, 1047775,
-       1047790, 1052563, 1057033, 1066900, 1066901, 1074327, 1084437,
-       1084881, 1105212, 1109326,  111397,  115894,  315221,  770449,
-        874593,  165594,  269029,  368136,  968432, 1109325,  155500,
-        638977,  651525,  819934, 1012473,  819933, 1114566, 1114567,
-       1146786, 1146795, 1146801, 1146802, 1143691, 1143685, 1157462,
-       1158720, 1161572, 1157329, 1159415, 1162382, 1463810, 1463860,
-       1463881, 1464086, 1464088]  # ToDo: add more items (e.g., all items from a family)
+
+    item_ids = [115611, 115892, 116017, 153267, 165550, 165551, 165704, 165988, 168927, 168930,
+                207857, 214381, 215352, 219150, 220435, 222879, 223136, 223434, 257847, 258396,
+                261700, 265254, 265257, 265559, 305080, 305229, 314384, 315176, 315179, 315460,
+                320682, 323013, 358231, 364413, 364606, 364738, 368140, 368628, 410257, 414353,
+                414620, 414752, 418235, 459804, 464374, 464536, 510054, 514172, 514242, 518091,
+                518094, 554047, 559870, 559873, 564274, 564533, 567623, 581078, 587069, 621300,
+                641042, 671039, 692531, 730259, 749421, 749720, 759893, 769312, 789224, 801217,
+                802833, 804503, 807493, 812726, 819932, 830625, 839362, 839363, 841841, 841842,
+                843585, 847859, 847863, 848765, 850333, 862454, 876663, 911429, 913363, 938566,
+                938567, 938570, 938576, 939661, 939662, 964752, 1036689, 1037857, 1047679,
+                1047681, 1047685, 1047743, 1047772, 1047773, 1047775, 1047790, 1052563, 1057033,
+                1066900, 1066901, 1074327, 1084437, 1084881, 1105212, 1109326, 111397, 115894,
+                315221, 770449, 874593, 165594, 269029, 368136, 968432, 1109325, 155500, 638977,
+                651525, 819934, 1012473, 819933, 1114566, 1114567, 1146786, 1146795, 1146801,
+                1146802, 1143691, 1143685, 1157462, 1158720, 1161572, 1157329, 1159415, 1162382,
+                1463810, 1463860, 1463881, 1464086, 1464088]
+
     df_items = df_items[df_items['item_nbr'].isin(item_ids)].copy()
 
-	
     max_date = '2014-04-01'
     filtered_chunks = []
-    chunk_size = 10**6
+    chunk_size = 10 ** 6
 
     for chunk in pd.read_csv(files["train"], chunksize=chunk_size):
         chunk_filtered = chunk[
@@ -91,6 +69,19 @@ def load_data(data_path=DATA_PATH):
     del filtered_chunks
 
     df_filtered = df_filtered.groupby(['store_nbr', 'item_nbr', 'date'])['unit_sales'].sum().reset_index()
+
+    # Remove store-item pairs where all sales are zero
+    nonzero_sales = (
+        df_filtered.groupby(['store_nbr', 'item_nbr'])['unit_sales']
+        .sum()
+        .reset_index()
+        .query("unit_sales > 0")
+        [['store_nbr', 'item_nbr']]
+    )
+    df_filtered = df_filtered.merge(nonzero_sales, on=['store_nbr', 'item_nbr'], how='inner')
+
+    # Keep only items that appear in final filtered data
+    df_items = df_items[df_items['item_nbr'].isin(df_filtered['item_nbr'].unique())].copy()
 
     return df_stores, df_items, df_filtered
 
