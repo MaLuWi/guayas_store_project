@@ -20,14 +20,9 @@ GOOGLE_DRIVE_LINKS = {
     "holidays_events": f"https://drive.google.com/uc?id={your_file_id_for_holidays_csv}",
     "train": f"https://drive.google.com/uc?id={your_file_id_for_train_csv}"
 }
+
+# Define BASE_DIR as the project root
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Define MODEL_PATH to point to the model directory
 MODEL_PATH = os.path.join(BASE_DIR, "model")
-# Set MODEL_PATH to a writable directory as well
-#MODEL_PATH = '/tmp/model/'
-
-# Google Drive file ID for your XGBoost model
-#your_file_id_for_xgboost_model_xgb = "1j_GdG-_Bp-t7gqXfbPXH2n7uNlqhNgGD"
-
-# Google Drive download link for the model file
-#GOOGLE_DRIVE_LINKS_MODELS = {
-#    "xgboost_model": f"https://drive.google.com/uc?id={your_file_id_for_xgboost_model_xgb}"
-#}
