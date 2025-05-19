@@ -48,34 +48,28 @@ def main():
         max_value=df_train['date'].max().date()
     )
 
-    # 3) Dynamically filter items with non-zero sales for this store
-    valid_items = (
-        df_train[df_train['store_nbr'] == store_id]
-        .groupby('item_nbr')['unit_sales']
-        .sum()
-        .loc[lambda x: x > 0]
-        .index
-        .tolist()
-    )
+   # Compute total sales per item for the selected store
+item_sales = (
+    df_train[
+        (df_train['store_nbr'] == store_id) &
+        (df_train['date'] <= pd.to_datetime(start_date))
+    ]
+    .groupby('item_nbr')['unit_sales']
+    .sum()
+    .reset_index()
+)
 
-    # Ensure items exist in df_items (clean intersection)
-    valid_items = sorted(set(df_items['item_nbr']).intersection(valid_items))
+# Filter out items with zero sales
+item_sales = item_sales[item_sales['unit_sales'] > 0]
 
-    if not valid_items:
-        st.sidebar.error(
-            f"No items with sales found for store {store_id} before {start_date}. "
-            "Try selecting another store or earlier date."
-        )
-        st.stop()
+# Optional: merge with df_items to get names or other metadata
+# item_sales = item_sales.merge(df_items[['item_nbr', 'family']], on='item_nbr', how='left')
 
-    item_id = st.sidebar.selectbox("Choose Item", valid_items)
+# Sort by total sales descending
+item_sales = item_sales.sort_values(by='unit_sales', ascending=False)
 
-    horizon = st.sidebar.number_input(
-        "Days to Forecast",
-        min_value=1,
-        max_value=60,
-        value=30
-    )
+# Final list of item_nbrs sorted by sales
+valid_items = item_sales['item_nbr'].tolist()
 
     # 4) Run forecast
     if st.sidebar.button("Run Forecast"):
