@@ -25,7 +25,7 @@ GOOGLE_DRIVE_LINKS = {
 MODEL_PATH = '/tmp/model/'
 
 # Google Drive file ID for your XGBoost model
-your_file_id_for_xgboost_model_xgb = "1Sqw5QuMy9cZ-7MmRxYKg59Kjvho-Dsil"
+your_file_id_for_xgboost_model_xgb = "1j_GdG-_Bp-t7gqXfbPXH2n7uNlqhNgGD"
 
 # Google Drive download link for the model file
 GOOGLE_DRIVE_LINKS_MODELS = {
