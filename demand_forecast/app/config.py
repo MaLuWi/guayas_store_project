@@ -1,7 +1,10 @@
 # app/config.py
+import os
 
-DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data')) + os.sep
-
+# where data files live
+DATA_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..', 'data')
+) + os.sep
 
 # Google Drive file IDs for each dataset
 your_file_id_for_stores_csv = '1OUyap9CGF59ewdkN3DM6NWw3nv-hT5pH'
@@ -11,7 +14,7 @@ your_file_id_for_oil_csv = '15uMxMXXSYEv14Yv4cLyKuiCEuO1TmXrU'
 your_file_id_for_holidays_csv = '1fNj8v8kDmfdslU_M9FgmmV_FPqd1tIN1'
 your_file_id_for_train_csv = '14cGjnrhqQaBZV9BZmJpO0qGftMENKOAM'
 
-# Google Drive download links for each file (use these for gdown or programmatic download!)
+# Google Drive download links for each file
 GOOGLE_DRIVE_LINKS = {
     "stores": f"https://drive.google.com/uc?id={your_file_id_for_stores_csv}",
     "items": f"https://drive.google.com/uc?id={your_file_id_for_items_csv}",
@@ -21,7 +24,11 @@ GOOGLE_DRIVE_LINKS = {
     "train": f"https://drive.google.com/uc?id={your_file_id_for_train_csv}"
 }
 
-MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'model')) + os.sep
+# where your ML models live
+MODEL_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..', 'model')
+) + os.sep
+
 # Google Drive file ID for your XGBoost model
 your_file_id_for_xgboost_model_xgb = "1Sqw5QuMy9cZ-7MmRxYKg59Kjvho-Dsil"
 
