@@ -8,7 +8,7 @@ your_file_id_for_items_csv = '1KPu1RTEQQCA_GoNEapFtq8oZTPmyvMFx'
 your_file_id_for_transactions_csv = '1FSrI_JqbzSmZ0c4NBmfiMT-kYQG31xUS'
 your_file_id_for_oil_csv = '15uMxMXXSYEv14Yv4cLyKuiCEuO1TmXrU'
 your_file_id_for_holidays_csv = '1fNj8v8kDmfdslU_M9FgmmV_FPqd1tIN1'
-your_file_id_for_train_csv = '1np5bbUlwy_Idb1nprUZY_dx1ffaS4P_O'
+your_file_id_for_train_csv = '1KsbtNzrfL5ZTFLpnaCyEUAmRzA2EBDLz'
 
 # Google Drive download links for each file (use these for gdown or programmatic download!)
 GOOGLE_DRIVE_LINKS = {
