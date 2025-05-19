@@ -1,4 +1,5 @@
 # data/data_utils.py
+
 import pandas as pd
 import numpy as np
 import os
@@ -23,7 +24,6 @@ def download_file(file_path, url):
     if not os.path.exists(file_path):
         print(f"[INFO] Downloading: {file_path}")
         try:
-            # fuzzy=True helps gdown handle different Drive URL formats
             result = gdown.download(url, file_path, quiet=False, fuzzy=True)
             if result is None or not os.path.exists(file_path):
                 raise RuntimeError("gdown returned no result or the file is still missing.")
@@ -35,8 +35,6 @@ def download_file(file_path, url):
             )
     else:
         print(f"[INFO] {file_path} already exists.")
-
-
 
 def load_data(data_path=DATA_PATH):
     """Load and filter datasets for Guayas region and top store-item combos."""
@@ -80,8 +78,8 @@ def load_data(data_path=DATA_PATH):
 def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, df_stores, df_items):
     # 1) Fetch historical data
     hist = df_train[
-        (df_train['store_nbr'] == store_nbr)
-        & (df_train['item_nbr'] == item_nbr)
+        (df_train['store_nbr'] == store_nbr) &
+        (df_train['item_nbr'] == item_nbr)
     ].copy()
     if hist.empty:
         return pd.DataFrame()
@@ -101,6 +99,10 @@ def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, 
     future_df = future_df.merge(df_stores, on='store_nbr', how='left')
     future_df = future_df.merge(df_items, on='item_nbr', how='left')
 
+    # ✅ Ensure 'perishable' column exists for compatibility with model
+    if 'perishable' not in future_df.columns:
+        future_df['perishable'] = 0
+
     # 3) Take last 30 days of history
     hist['date'] = pd.to_datetime(hist['date'])
     hist = hist.sort_values('date').tail(30)
@@ -110,9 +112,11 @@ def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, 
     # 4) Create lag features
     padded = np.pad(vals, (0, pad_width), mode='edge')
     future_df['lag_1'] = padded[-days_ahead:]
+
     def make_lag(arr, shift):
         shifted = np.pad(arr, (shift, 0), mode='edge')[:-shift]
         return np.pad(shifted, (0, pad_width), mode='edge')[-days_ahead:]
+
     future_df['lag_7'] = make_lag(vals, 7)
     future_df['lag_14'] = make_lag(vals, 14)
     future_df['lag_30'] = make_lag(vals, 30)
@@ -134,3 +138,4 @@ def generate_future_data(store_nbr, item_nbr, start_date, days_ahead, df_train, 
             future_df[col] = LabelEncoder().fit_transform(future_df[col].astype(str))
 
     return future_df
+
