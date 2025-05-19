@@ -1,20 +1,32 @@
-import os
+# app/config.py
 
-# Path where files will be downloaded in the Streamlit Cloud environment
-DATA_PATH = '/tmp/data/'
+DATA_PATH = "data/"
 
-# Google Drive file IDs
+# Google Drive file IDs for each dataset
+your_file_id_for_stores_csv = '1OUyap9CGF59ewdkN3DM6NWw3nv-hT5pH'
+your_file_id_for_items_csv = '1KPu1RTEQQCA_GoNEapFtq8oZTPmyvMFx'
+your_file_id_for_transactions_csv = '1FSrI_JqbzSmZ0c4NBmfiMT-kYQG31xUS'
+your_file_id_for_oil_csv = '15uMxMXXSYEv14Yv4cLyKuiCEuO1TmXrU'
+your_file_id_for_holidays_csv = '1fNj8v8kDmfdslU_M9FgmmV_FPqd1tIN1'
+your_file_id_for_train_csv = '1np5bbUlwy_Idb1nprUZY_dx1ffaS4P_O'
+
+# Google Drive download links for each file (use these for gdown or programmatic download!)
 GOOGLE_DRIVE_LINKS = {
-    "stores": "https://drive.google.com/uc?id=1OUyap9CGF59ewdkN3DM6NWw3nv-hT5pH",
-    "items": "https://drive.google.com/uc?id=1KPu1RTEQQCA_GoNEapFtq8oZTPmyvMFx",
-    "transactions": "https://drive.google.com/uc?id=1FSrI_JqbzSmZ0c4NBmfiMT-kYQG31xUS",
-    "oil": "https://drive.google.com/uc?id=15uMxMXXSYEv14Yv4cLyKuiCEuO1TmXrU",
-    "holidays_events": "https://drive.google.com/uc?id=1fNj8v8kDmfdslU_M9FgmmV_FPqd1tIN1",
-    "train": "https://drive.google.com/uc?id=1KsbtNzrfL5ZTFLpnaCyEUAmRzA2EBDLz"
+    "stores": f"https://drive.google.com/uc?id={your_file_id_for_stores_csv}",
+    "items": f"https://drive.google.com/uc?id={your_file_id_for_items_csv}",
+    "transactions": f"https://drive.google.com/uc?id={your_file_id_for_transactions_csv}",
+    "oil": f"https://drive.google.com/uc?id={your_file_id_for_oil_csv}",
+    "holidays_events": f"https://drive.google.com/uc?id={your_file_id_for_holidays_csv}",
+    "train": f"https://drive.google.com/uc?id={your_file_id_for_train_csv}"
 }
 
-# Automatically resolve base project directory
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+MODEL_PATH = 'model/'
 
-# Path to your model file (.xgb)
-MODEL_PATH = os.path.join(BASE_DIR, "model", "model.xgb")  # <-- Replace with your actual filename
+# Google Drive file ID for your XGBoost model
+your_file_id_for_xgboost_model_xgb = "1Sqw5QuMy9cZ-7MmRxYKg59Kjvho-Dsil"
+
+# Google Drive download link for the model file
+GOOGLE_DRIVE_LINKS_MODELS = {
+    "xgboost_model": f"https://drive.google.com/uc?id={your_file_id_for_xgboost_model_xgb}"
+}
+
