@@ -2,7 +2,7 @@ import os
 import xgboost as xgb
 import pandas as pd
 import gdown
-
+import numpy as np
 from data.data_utils import generate_future_data
 
 # Your actual public Google Drive link for the .xgb model
