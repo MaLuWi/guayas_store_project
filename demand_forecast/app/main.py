@@ -1,18 +1,20 @@
 # app/main.py
-import sys
-import os
-import datetime
 
+import os
+import sys
+import datetime
 import pandas as pd
 import streamlit as st
 import plotly.express as px
 
+from app.config import MODEL_PATH
+from model.model_utils import load_model, forecast_timeseries
+from data.data_utils import load_data
+
+# Add root path to sys.path for imports (if running locally or in some setups)
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
-
-from data.data_utils import load_data
-from model.model_utils import load_model, forecast_timeseries
 
 def main():
     st.set_page_config(layout="wide")
@@ -21,7 +23,7 @@ def main():
     # 1) Load data & model
     df_stores, df_items, df_train = load_data()
     df_train['date'] = pd.to_datetime(df_train['date'])
-    model = load_model()
+    model = load_model(MODEL_PATH)
 
     # 2) Sidebar inputs
     st.sidebar.header("Forecast Inputs")
