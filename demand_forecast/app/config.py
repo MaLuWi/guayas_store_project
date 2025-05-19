@@ -1,10 +1,7 @@
-# app/config.py
 import os
 
-# where data files live
-DATA_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..', 'data')
-) + os.sep
+# Set DATA_PATH to a writable directory in the Streamlit environment
+DATA_PATH = '/tmp/data/'
 
 # Google Drive file IDs for each dataset
 your_file_id_for_stores_csv = '1OUyap9CGF59ewdkN3DM6NWw3nv-hT5pH'
@@ -13,7 +10,7 @@ your_file_id_for_transactions_csv = '1FSrI_JqbzSmZ0c4NBmfiMT-kYQG31xUS'
 your_file_id_for_oil_csv = '15uMxMXXSYEv14Yv4cLyKuiCEuO1TmXrU'
 your_file_id_for_holidays_csv = '1fNj8v8kDmfdslU_M9FgmmV_FPqd1tIN1'
 your_file_id_for_train_csv = '1KsbtNzrfL5ZTFLpnaCyEUAmRzA2EBDLz'
-1KsbtNzrfL5ZTFLpnaCyEUAmRzA2EBDLz
+
 # Google Drive download links for each file
 GOOGLE_DRIVE_LINKS = {
     "stores": f"https://drive.google.com/uc?id={your_file_id_for_stores_csv}",
@@ -24,10 +21,8 @@ GOOGLE_DRIVE_LINKS = {
     "train": f"https://drive.google.com/uc?id={your_file_id_for_train_csv}"
 }
 
-# where your ML models live
-MODEL_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..', 'model')
-) + os.sep
+# Set MODEL_PATH to a writable directory as well
+MODEL_PATH = '/tmp/model/'
 
 # Google Drive file ID for your XGBoost model
 your_file_id_for_xgboost_model_xgb = "1Sqw5QuMy9cZ-7MmRxYKg59Kjvho-Dsil"
