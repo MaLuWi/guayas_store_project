@@ -47,7 +47,7 @@ def load_data(data_path=DATA_PATH):
     
     # Load data only for stores in 'Pichincha' region
     # Get the list of store IDs for the state 'Pichincha'
-    store_ids = df_stores[df_stores['state'] == 'Guayas']['store_nbr'].unique()
+    store_ids = [24, 26, 27, 28, 30, 32, 34, 35, 51, 36]
     # Select the same items as for "Classical methods":
     item_ids = [115611,  115892,  116017,  153267,  165550,  165551,  165704,
         165988,  168927,  168930,  207857,  214381,  215352,  219150,
