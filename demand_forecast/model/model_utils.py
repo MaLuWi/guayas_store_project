@@ -1,19 +1,18 @@
-import pickle
+import os
 import xgboost as xgb
 import pandas as pd
-from data.data_utils import download_file, generate_future_data
-from app.config import MODEL_PATH, GOOGLE_DRIVE_LINKS_MODELS
+from data.data_utils import generate_future_data
+from app.config import MODEL_PATH
 from sklearn.preprocessing import LabelEncoder
 
 
-
 def load_model(model_path=MODEL_PATH):
-    files = {"xgboost_model": f"{model_path}model.xgb"}
-    for key, file_path in files.items():
-        download_file(file_path, GOOGLE_DRIVE_LINKS_MODELS[key])
-    xgboost_model = xgb.XGBRegressor()
-    xgboost_model.load_model(files["xgboost_model"])
-    return xgboost_model
+    model_file = os.path.join(model_path, "model.xgb")
+    if not os.path.exists(model_file):
+        raise FileNotFoundError(f"Model file not found at {model_file}")
+    model = xgb.XGBRegressor()
+    model.load_model(model_file)
+    return model
 
 def predict(model, input_data):
     drop_cols = [c for c in ('date','unit_sales') if c in input_data]
