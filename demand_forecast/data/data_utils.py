@@ -64,14 +64,8 @@ def load_data(data_path=DATA_PATH):
     )
     combos = set(map(tuple, top_combos.values))
 
-    filtered = []
-    for chunk in pd.read_csv(files["train"], parse_dates=["date"], chunksize=10**6):
-        mask = (
-            (chunk['date'] < max_date)
-            & chunk.apply(lambda r: (r['store_nbr'], r['item_nbr']) in combos, axis=1)
-        )
-        filtered.append(chunk.loc[mask, ['store_nbr', 'item_nbr', 'date', 'unit_sales']])
-    df_train = pd.concat(filtered, ignore_index=True)
+   df_train = df_sample[df_sample[['store_nbr', 'item_nbr']].apply(tuple, axis=1).isin(combos)]
+
 
     return df_stores, df_items, df_train
 
