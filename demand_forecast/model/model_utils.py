@@ -1,10 +1,10 @@
 import os
-import pickle
 import pandas as pd
+import xgboost as xgb
 from sklearn.preprocessing import LabelEncoder
+
 from app.config import MODEL_PATH
 from data.data_utils import generate_future_data
-import xgboost as xgb
 
 def load_model(path):
     if not os.path.exists(path):
@@ -15,10 +15,12 @@ def load_model(path):
     return model
 
 def predict(model, input_data: pd.DataFrame):
-    """Drop non-feature cols and run model.predict."""
+    """Prepare features and predict using XGBoost Booster."""
     drop_cols = [c for c in ("date", "unit_sales") if c in input_data.columns]
     X = input_data.drop(columns=drop_cols)
-    return model.predict(X)
+
+    dmatrix = xgb.DMatrix(X)
+    return model.predict(dmatrix)
 
 def forecast_timeseries(
     model,
@@ -49,7 +51,12 @@ def forecast_timeseries(
     features = [c for c in features if c in future_df.columns]
 
     # 3) Predict
-    future_df["prediction"] = model.predict(future_df[features])
+    dmatrix = xgb.DMatrix(future_df[features])
+    future_df["prediction"] = model.predict(dmatrix)
+
+    # 4) Return date + prediction
+    return future_df[["date", "prediction"]]
+
 
     # 4) Return date + prediction
     return future_df[["date", "prediction"]]
