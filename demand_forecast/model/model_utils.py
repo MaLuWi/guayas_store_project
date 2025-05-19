@@ -43,11 +43,12 @@ def forecast_timeseries(
 
     # 2) Exact list of feature columns
     features = [
-        "onpromotion", "year", "month", "day", "day_of_week",
-        "lag_1", "lag_7", "lag_14", "lag_30",
-        "unit_sales_7d_avg", "roll7_std", "pct_chg_7d", "is_weekend",
-        "city", "state", "cluster", "family", "class", "store_type"
-    ]
+    "onpromotion", "year", "month", "day", "day_of_week",
+    "lag_1", "lag_7", "lag_14", "lag_30",
+    "unit_sales_7d_avg", "roll7_std", "pct_chg_7d", "is_weekend",
+    "city", "state", "cluster", "family", "class", 
+    "perishable", "store_nbr", "item_nbr"
+]
     features = [c for c in features if c in future_df.columns]
 
     # 3) Predict
