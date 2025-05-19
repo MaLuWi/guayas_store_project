@@ -10,13 +10,13 @@ from data.data_utils import download_file
 
 def load_model():
     """Download and load the XGBoost model artifact."""
-    # local path where the model should live
+    # 1) local path where the model should live
     model_fp = os.path.join(MODEL_PATH, "xgboost_model.pkl")
 
-    # download from Drive if it’s missing
+    # 2) download from Drive if it’s missing
     download_file(model_fp, GOOGLE_DRIVE_LINKS_MODELS["xgboost_model"])
 
-    # load and return the model object
+    # 3) load and return the model object
     with open(model_fp, "rb") as f:
         model = pickle.load(f)
     return model
