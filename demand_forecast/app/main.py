@@ -6,9 +6,9 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
-# ensure this runs before any Streamlit commands
+# Configure Streamlit layout and page title
 st.set_page_config(layout="wide", page_title="Sales Forecasting Dashboard")
-
+# set project’s root folder
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
@@ -25,22 +25,22 @@ def get_data():
 @st.cache_resource(show_spinner=False)
 def get_model():
     return load_model()
-
+#main app entry
 def main():
     st.title("🛒 Sales Forecasting Dashboard")
 
-    # 1) Load data and model
+    # Load data and model
     df_stores, df_items, df_train = get_data()
     model = get_model()
 
-    # 2) Sidebar inputs
+    # Sidebar: user inputs for store, item, start date
     st.sidebar.header("Forecast Inputs")
 
     store_id = st.sidebar.selectbox(
         "Choose Store",
         sorted(df_stores['store_nbr'].unique())
     )
-
+    # pick forecast start date
     start_date = st.sidebar.date_input(
         "Forecast Start Date",
         value=datetime.date(2014, 1, 1),
@@ -69,15 +69,15 @@ def main():
     valid_items = item_sales['item_nbr'].tolist()
 
     item_id = st.sidebar.selectbox("Choose Item", valid_items)
-
+    # how many days ahead to forecast
     horizon = st.sidebar.number_input(
         "Days to Forecast",
         min_value=1,
         max_value=60,
-        value=30
+        value=14
     )
 
-    # 4) Run forecast
+    # Run forecast
     if st.sidebar.button("Run Forecast"):
         with st.spinner("Running forecast…"):
             fc = forecast_timeseries(
@@ -113,7 +113,7 @@ def main():
         df_plot = pd.merge(actual, fc, on='date', how='outer').sort_values('date')
         df_plot['prediction'] = df_plot['prediction'].ffill()
 
-        # 5) Plot
+        # Plot the result
         fig = px.line(
             df_plot,
             x='date',
