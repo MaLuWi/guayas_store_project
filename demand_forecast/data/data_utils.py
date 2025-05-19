@@ -1,5 +1,6 @@
 # data/data_utils.py
 import pandas as pd
+import numpy as np
 import os
 import gdown
 from app.config import DATA_PATH, GOOGLE_DRIVE_LINKS
