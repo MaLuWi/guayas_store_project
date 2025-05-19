@@ -1,6 +1,7 @@
 # app/config.py
 
-DATA_PATH = "data/"
+DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data')) + os.sep
+
 
 # Google Drive file IDs for each dataset
 your_file_id_for_stores_csv = '1OUyap9CGF59ewdkN3DM6NWw3nv-hT5pH'
@@ -20,8 +21,7 @@ GOOGLE_DRIVE_LINKS = {
     "train": f"https://drive.google.com/uc?id={your_file_id_for_train_csv}"
 }
 
-MODEL_PATH = 'model/'
-
+MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'model')) + os.sep
 # Google Drive file ID for your XGBoost model
 your_file_id_for_xgboost_model_xgb = "1Sqw5QuMy9cZ-7MmRxYKg59Kjvho-Dsil"
 
