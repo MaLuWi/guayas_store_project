@@ -62,14 +62,14 @@ item_sales = (
 # Filter out items with zero sales
 item_sales = item_sales[item_sales['unit_sales'] > 0]
 
-# Optional: merge with df_items to get names or other metadata
-# item_sales = item_sales.merge(df_items[['item_nbr', 'family']], on='item_nbr', how='left')
 
 # Sort by total sales descending
 item_sales = item_sales.sort_values(by='unit_sales', ascending=False)
 
 # Final list of item_nbrs sorted by sales
 valid_items = item_sales['item_nbr'].tolist()
+
+item_id = st.sidebar.selectbox("Choose Item", valid_items)
 
     # 4) Run forecast
     if st.sidebar.button("Run Forecast"):
