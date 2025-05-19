@@ -46,15 +46,34 @@ def load_data(data_path=DATA_PATH):
     # Load each downloaded CSV file into a pandas DataFrame
     df_stores = pd.read_csv(files["stores"])  # Stores data
     df_items = pd.read_csv(files["items"])  # Items data
-    df_transactions = pd.read_csv(files["transactions"])  # Transactions data
-    df_oil = pd.read_csv(files["oil"])  # Oil prices data
-    df_holidays = pd.read_csv(files["holidays_events"])  # Holidays and events data
+  
     
     # Load data only for stores in 'Pichincha' region
     # Get the list of store IDs for the state 'Pichincha'
-    store_ids = df_stores[df_stores['state'] == 'Pichincha']['store_nbr'].unique()
+    store_ids = df_stores[df_stores['state'] == 'Guayas']['store_nbr'].unique()
     # Select the same items as for "Classical methods":
-    item_ids = [564533, 838216, 582865, 364606]  # ToDo: add more items (e.g., all items from a family)
+    item_ids = [115611,  115892,  116017,  153267,  165550,  165551,  165704,
+        165988,  168927,  168930,  207857,  214381,  215352,  219150,
+        220435,  222879,  223136,  223434,  257847,  258396,  261700,
+        265254,  265257,  265559,  305080,  305229,  314384,  315176,
+        315179,  315460,  320682,  323013,  358231,  364413,  364606,
+        364738,  368140,  368628,  410257,  414353,  414620,  414752,
+        418235,  459804,  464374,  464536,  510054,  514172,  514242,
+        518091,  518094,  554047,  559870,  559873,  564274,  564533,
+        567623,  581078,  587069,  621300,  641042,  671039,  692531,
+        730259,  749421,  749720,  759893,  769312,  789224,  801217,
+        802833,  804503,  807493,  812726,  819932,  830625,  839362,
+        839363,  841841,  841842,  843585,  847859,  847863,  848765,
+        850333,  862454,  876663,  911429,  913363,  938566,  938567,
+        938570,  938576,  939661,  939662,  964752, 1036689, 1037857,
+       1047679, 1047681, 1047685, 1047743, 1047772, 1047773, 1047775,
+       1047790, 1052563, 1057033, 1066900, 1066901, 1074327, 1084437,
+       1084881, 1105212, 1109326,  111397,  115894,  315221,  770449,
+        874593,  165594,  269029,  368136,  968432, 1109325,  155500,
+        638977,  651525,  819934, 1012473,  819933, 1114566, 1114567,
+       1146786, 1146795, 1146801, 1146802, 1143691, 1143685, 1157462,
+       1158720, 1161572, 1157329, 1159415, 1162382, 1463810, 1463860,
+       1463881, 1464086, 1464088]  # ToDo: add more items (e.g., all items from a family)
     # Select data before April 2014
     max_date = '2014-04-01'
 
