@@ -1,18 +1,17 @@
-# app/model_utils.py
-
 import os
 import pickle
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-
 from app.config import MODEL_PATH
 from data.data_utils import generate_future_data
+import xgboost as xgb
 
-def load_model():
-    """Load the pickled XGBoost model directly from model/model.pkl"""
-    model_fp = os.path.join(MODEL_PATH, "model.pkl")
-    with open(model_fp, "rb") as f:
-        model = pickle.load(f)
+def load_model(path):
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Model file not found at: {path}")
+
+    model = xgb.Booster()
+    model.load_model(path)
     return model
 
 def predict(model, input_data: pd.DataFrame):
