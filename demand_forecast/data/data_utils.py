@@ -8,21 +8,25 @@ from sklearn.preprocessing import LabelEncoder
 
 def download_file(file_path, url):
     """Safely download a file from Google Drive to a given path."""
+    import os
+    import gdown
+
     try:
         dir_path = os.path.dirname(file_path)
         if dir_path and not os.path.exists(dir_path):
             os.makedirs(dir_path, exist_ok=True)
     except Exception as e:
-        print(f"Failed to create directory {dir_path}: {e}")
+        print(f"[ERROR] Failed to create directory {dir_path}: {e}")
 
     if not os.path.exists(file_path):
-        import gdown
         try:
+            print(f"[INFO] Downloading: {file_path}")
             gdown.download(url, file_path, quiet=False)
         except Exception as e:
-            print(f"Download failed for {file_path}: {e}")
+            print(f"[ERROR] Download failed for {file_path}: {e}")
     else:
-        print(f"{file_path} already exists.")
+        print(f"[INFO] {file_path} already exists.")
+
 
 
 def load_data(data_path=DATA_PATH):
