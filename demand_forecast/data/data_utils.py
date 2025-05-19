@@ -87,7 +87,7 @@ def load_data(data_path=DATA_PATH):
     df_filtered = df_filtered.groupby(['store_nbr', 'item_nbr', 'date']).sum()['unit_sales'].reset_index()
 
     # Return all the loaded DataFrames
-    return df_stores, df_items, df_transactions, df_oil, df_holidays, df_filtered
+    return df_stores, df_items, df_filtered
 
 def preprocess_input_data(store_id, item_id, split_date, df_stores, df_items, df_filtered):
     """Preprocesses input data into a format suitable for model prediction."""
